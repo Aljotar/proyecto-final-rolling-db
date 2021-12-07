@@ -22,7 +22,7 @@ exports.crearVenta = async (req, res) => {
         const age = today - birthdayDate;
 
         if (age <= AGE18) {
-            return res.status(400).json({ msg: 'Sos menor no podes comprar ' });
+            return res.status(400).json({ msg: 'Eres menor no podes comprar ' });
         }
 
         let venta = req.body;
@@ -30,12 +30,17 @@ exports.crearVenta = async (req, res) => {
         //Me trae los datos del producto con el post.
         let sales = [];
         const getProduct = async (prod) => {
-            let products = await Producto.findById(prod.productId);
-            return products;
+            let product = await Producto.findById(prod.productId);
+            return product;
         };
+        const substract = async (prod, quantity) => {
+            const newAmount = prod.amount - quantity;
+            await Producto.findByIdAndUpdate(prod._id, {amount: newAmount});
+        }
         for (let j = 0; j < venta.productsList.length; j++) {
             const item = venta.productsList[j];
             const producto = await getProduct(item);
+            await substract(producto, item.quantity);
             sales.push({ producto, quantity: item.quantity });
         }
         venta.productsList = sales;
