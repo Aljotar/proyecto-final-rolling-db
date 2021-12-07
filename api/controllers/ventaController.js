@@ -36,7 +36,7 @@ exports.crearVenta = async (req, res) => {
         const substract = async (prod, quantity) => {
             const newAmount = prod.amount - quantity;
             await Producto.findByIdAndUpdate(prod._id, {amount: newAmount});
-        }
+        };
         for (let j = 0; j < venta.productsList.length; j++) {
             const item = venta.productsList[j];
             const producto = await getProduct(item);
